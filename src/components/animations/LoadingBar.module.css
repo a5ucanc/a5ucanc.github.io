@@ -1,0 +1,22 @@
+/* Container for the loading bar */
+.loadingBar {
+    width: 50vw;
+    height: 2vh;
+    background-color: #000000;
+    overflow: hidden;
+}
+
+/* Actual loading fill */
+.loadingFill {
+    height: 100%;
+    width: 0;
+    background-color: #00ac00;
+    animation: fillLoadingBar 3s forwards;
+}
+
+/* Animation to fill the loading bar */
+@keyframes fillLoadingBar {
+    to {
+        width: 100%;
+    }
+}

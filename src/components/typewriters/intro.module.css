@@ -1,0 +1,5 @@
+.typewriter {
+    font-size: calc(1.5*(1vh + 1vw));
+    letter-spacing: .2rem;
+    white-space: pre-line;
+}

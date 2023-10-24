@@ -1,0 +1,12 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'DM Mono', 'Roboto', sans-serif;
+    background-color: #333333;
+    color: #d5d5d5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
