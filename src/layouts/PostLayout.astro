@@ -31,6 +31,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
           </div>
         )}
       </header>
+      <nav id="toc" aria-label="Table of contents"></nav>
       <div class="prose">
         <slot />
       </div>
@@ -62,6 +63,73 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
       });
     });
   </script>
+  <script>
+  // ── Read time ──────────────────────────────────────────
+  const prose = document.querySelector('.prose');
+  const metaEl = document.querySelector('.post-meta');
+
+  if (prose && metaEl) {
+    const words = (prose.textContent ?? '').trim().split(/\s+/).filter(Boolean).length;
+    const mins = Math.max(1, Math.round(words / 200));
+    const sep = document.createElement('span');
+    sep.className = 'meta-sep';
+    sep.setAttribute('aria-hidden', 'true');
+    sep.textContent = '·';
+    const rt = document.createElement('span');
+    rt.className = 'read-time';
+    rt.textContent = `${mins} min read`;
+    metaEl.appendChild(sep);
+    metaEl.appendChild(rt);
+  }
+
+  // ── Table of Contents ──────────────────────────────────
+  const headings = Array.from(
+    document.querySelectorAll('.prose h2, .prose h3')
+  ) as HTMLElement[];
+  const tocEl = document.getElementById('toc');
+
+  if (tocEl && headings.length >= 2) {
+    const tocTitle = document.createElement('div');
+    tocTitle.className = 'toc-label';
+    tocTitle.textContent = '// contents';
+    tocEl.appendChild(tocTitle);
+
+    const ul = document.createElement('ul');
+    ul.className = 'toc-list';
+
+    headings.forEach((h) => {
+      if (!h.id) return;
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.className = h.tagName === 'H3' ? 'toc-link toc-h3' : 'toc-link';
+      a.href = `#${h.id}`;
+      a.textContent = h.textContent ?? '';
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+
+    tocEl.appendChild(ul);
+
+    // Scroll-tracking: highlight the heading currently in the viewport
+    let activeLink: Element | null = null;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const link = tocEl.querySelector(`a[href="#${entry.target.id}"]`);
+          if (entry.isIntersecting && link) {
+            if (activeLink) activeLink.classList.remove('active');
+            link.classList.add('active');
+            activeLink = link;
+          }
+        });
+      },
+      { rootMargin: '-10% 0% -80% 0%', threshold: 0 }
+    );
+
+    headings.forEach((h) => { if (h.id) observer.observe(h); });
+  }
+</script>
 </BaseLayout>
 
 <style>
@@ -72,4 +140,72 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   .post-title { font-family: var(--font-mono); font-size: 1.75rem; font-weight: 600; line-height: 1.2; margin-bottom: 0.75rem; color: var(--color-text-primary); }
   .post-description { color: var(--color-text-secondary); font-size: 0.95rem; margin-bottom: 1rem; }
   .post-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+  /* Read time */
+  .meta-sep { color: var(--color-border-strong); }
+  .read-time { font-family: var(--font-mono); }
+
+  /* Table of Contents — hidden by default, shown at ≥1280px */
+  #toc {
+    display: none;
+  }
+
+  @media (min-width: 1280px) {
+    #toc {
+      display: block;
+      position: fixed;
+      left: calc(50% + 370px + 1.5rem);
+      top: 4.5rem;
+      width: 11.5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      line-height: 1.5;
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: 4px;
+      padding: 0.75rem;
+    }
+  }
+
+  .toc-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .toc-link {
+    display: block;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    padding: 0.2rem 0.5rem;
+    border-left: 2px solid transparent;
+    line-height: 1.4;
+    transition: color 0.15s, border-color 0.15s;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .toc-link:hover { color: var(--color-text-primary); text-decoration: none; }
+  .toc-link.active {
+    color: var(--color-accent-primary);
+    border-left-color: var(--color-accent-primary);
+  }
+  .toc-h3 {
+    padding-left: 1.25rem;
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+  }
 </style>
