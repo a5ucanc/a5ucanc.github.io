@@ -2,32 +2,32 @@
 @import "@fontsource/ibm-plex-mono/600.css";
 @import "@fontsource/jetbrains-mono/400.css";
 
+/* DEADFALL — phosphor amber + burnt rust + institutional olive */
 :root {
-  --color-bg-void: #0D0F0E;
-  --color-bg-base: #111614;
-  --color-bg-surface: #161C19;
-  --color-bg-elevated: #1C2520;
-  --color-text-primary: #D4E8D8;
-  --color-text-secondary: #8BA890;
-  --color-text-muted: #566B5C;
-  --color-text-inverse: #0D0F0E;
-  --color-accent-primary: #39FF85;
-  --color-accent-primary-dim: #2CC96A;
-  --color-accent-primary-muted: #1A7A42;
-  --color-accent-primary-ghost: #0F3D24;
-  --color-accent-threat: #FF4040;
-  --color-accent-threat-ghost: #2D1212;
-  --color-accent-intel: #F5A623;
-  --color-accent-intel-ghost: #2E1F08;
-  --color-code-bg: #0A0D0B;
-  --color-code-keyword: #39FF85;
-  --color-code-string: #F5A623;
-  --color-code-function: #9FCBA0;
-  --color-code-number: #FF7C7C;
-  --color-code-comment: #4E6655;
-  --color-border-subtle: #1E2A23;
-  --color-border-default: #2A3D30;
-  --color-border-strong: #3D5C45;
+  --color-bg-void:              #0E0C0A;
+  --color-bg-base:              #131109;
+  --color-bg-surface:           #1A1814;
+  --color-bg-elevated:          #232018;
+  --color-text-primary:         #E8DFC8;
+  --color-text-secondary:       #A89878;
+  --color-text-muted:           #6B5E48;
+  --color-accent-primary:       #E8A842;
+  --color-accent-primary-dim:   #C4893A;
+  --color-accent-primary-muted: #7A5520;
+  --color-accent-primary-ghost: #1F1608;
+  --color-accent-threat:        #D4542A;
+  --color-accent-threat-ghost:  #1E0E08;
+  --color-accent-intel:         #C8B840;
+  --color-accent-intel-ghost:   #1A1808;
+  --color-code-bg:              #0B0A07;
+  --color-code-keyword:         #E8A842;
+  --color-code-string:          #C8B840;
+  --color-code-function:        #D4A870;
+  --color-code-number:          #D4542A;
+  --color-code-comment:         #5A5040;
+  --color-border-subtle:        #1E1C14;
+  --color-border-default:       #2E2A1E;
+  --color-border-strong:        #4A4230;
 
   --font-mono: "IBM Plex Mono", "Consolas", monospace;
   --font-code: "JetBrains Mono", "Fira Code", monospace;
