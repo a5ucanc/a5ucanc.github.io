@@ -16,6 +16,7 @@
     "@fontsource/ibm-plex-mono": "^5.2.7",
     "@fontsource/jetbrains-mono": "^5.2.8",
     "astro": "^6.0.8",
+    "fuse.js": "^7.1.0",
     "typescript": "^5.9.3"
   }
 }
