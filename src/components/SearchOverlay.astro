@@ -224,21 +224,36 @@ const { postsJson } = Astro.props;
   }
 
   .sr-card {
-    padding: 0.9rem 0;
-    border-bottom: 1px solid var(--color-border-subtle);
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--color-border-default);
   }
   .sr-card:last-child { border-bottom: none; }
 
   .sr-meta { margin-bottom: 0.25rem; }
   .sr-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted); }
 
-  .sr-title { font-family: var(--font-mono); font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .sr-title { font-family: var(--font-mono); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.3rem; }
   .sr-title a { color: var(--color-text-primary); text-decoration: none; }
   .sr-title a:hover { color: var(--color-accent-primary); }
 
   .sr-desc { font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 0.4rem; }
 
-  .sr-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
-  .sr-tag { font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted); text-decoration: none; }
-  .sr-tag:hover { color: var(--color-accent-primary-dim); }
+  .sr-tags { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-top: 0.35rem; }
+  .sr-tag {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-accent-primary-muted);
+    background: var(--color-accent-primary-ghost);
+    border: 1px solid var(--color-accent-primary-muted);
+    padding: 0.1em 0.45em;
+    border-radius: 3px;
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sr-tag:hover {
+    color: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+    text-decoration: none;
+  }
 </style>
