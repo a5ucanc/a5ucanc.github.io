@@ -8,6 +8,9 @@
   margin-bottom: 1rem;
   color: var(--color-accent-primary);
 }
+.prose h2, .prose h3, .prose h4 {
+  scroll-margin-top: 4.5rem;
+}
 .prose h1 { font-size: 1.75rem; }
 .prose h2 { font-size: 1.4rem; border-bottom: 1px solid var(--color-border-subtle); padding-bottom: 0.5rem; }
 .prose h3 { font-size: 1.15rem; color: var(--color-text-primary); }
