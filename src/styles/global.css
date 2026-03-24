@@ -10,7 +10,7 @@
   --color-bg-elevated:          #232018;
   --color-text-primary:         #E8DFC8;
   --color-text-secondary:       #A89878;
-  --color-text-muted:           #6B5E48;
+  --color-text-muted:           #8B7B60;
   --color-accent-primary:       #E8A842;
   --color-accent-primary-dim:   #C4893A;
   --color-accent-primary-muted: #7A5520;
@@ -24,10 +24,10 @@
   --color-code-string:          #C8B840;
   --color-code-function:        #D4A870;
   --color-code-number:          #D4542A;
-  --color-code-comment:         #5A5040;
-  --color-border-subtle:        #1E1C14;
-  --color-border-default:       #2E2A1E;
-  --color-border-strong:        #4A4230;
+  --color-code-comment:         #6E6050;
+  --color-border-subtle:        #2A271D;
+  --color-border-default:       #3D3828;
+  --color-border-strong:        #574F3A;
 
   --font-mono: "IBM Plex Mono", "Consolas", monospace;
   --font-code: "JetBrains Mono", "Fira Code", monospace;
