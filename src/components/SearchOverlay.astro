@@ -1,0 +1,243 @@
+---
+interface Props {
+  postsJson: string;
+}
+const { postsJson } = Astro.props;
+---
+
+<div id="search-overlay" role="dialog" aria-modal="true" aria-label="Search posts" hidden>
+  <div class="search-modal">
+    <div class="search-bar">
+      <span class="search-prompt">$_</span>
+      <input
+        id="search-input"
+        type="text"
+        placeholder="search posts..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd class="search-esc">esc</kbd>
+    </div>
+    <div id="search-status" class="search-status">// type to search</div>
+    <div id="search-results" class="search-results"></div>
+  </div>
+</div>
+
+<script define:vars={{ postsJson }}>
+  window.__SEARCH_POSTS__ = JSON.parse(postsJson);
+</script>
+
+<script>
+  import Fuse from 'fuse.js';
+
+  const overlay = document.getElementById('search-overlay');
+  const input = document.getElementById('search-input');
+  const statusEl = document.getElementById('search-status');
+  const resultsEl = document.getElementById('search-results');
+
+  const posts = (window as any).__SEARCH_POSTS__;
+  const fuse = new Fuse(posts, {
+    keys: [
+      { name: 'title', weight: 0.5 },
+      { name: 'description', weight: 0.3 },
+      { name: 'tags', weight: 0.2 },
+    ],
+    threshold: 0.4,
+    includeScore: true,
+    minMatchCharLength: 2,
+  });
+
+  function openSearch() {
+    overlay!.removeAttribute('hidden');
+    (input as HTMLInputElement).value = '';
+    statusEl!.textContent = '// type to search posts';
+    resultsEl!.textContent = '';
+    requestAnimationFrame(() => (input as HTMLInputElement).focus());
+  }
+
+  function closeSearch() {
+    overlay!.setAttribute('hidden', '');
+  }
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    const tag = (document.activeElement as HTMLElement)?.tagName;
+    if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+      e.preventDefault();
+      openSearch();
+    }
+    if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      openSearch();
+    }
+    if (e.key === 'Escape') {
+      closeSearch();
+    }
+  });
+
+  overlay!.addEventListener('click', (e) => {
+    if (e.target === overlay) closeSearch();
+  });
+
+  document.addEventListener('search:open', openSearch);
+
+  function makePostCard(post: any) {
+    const article = document.createElement('article');
+    article.className = 'sr-card';
+
+    const meta = document.createElement('div');
+    meta.className = 'sr-meta';
+    const time = document.createElement('time');
+    time.className = 'sr-date';
+    time.textContent = post.pubDate;
+    meta.appendChild(time);
+    article.appendChild(meta);
+
+    const h2 = document.createElement('h2');
+    h2.className = 'sr-title';
+    const link = document.createElement('a');
+    link.href = '/blog/' + post.slug;
+    link.textContent = post.title;
+    link.addEventListener('click', closeSearch);
+    h2.appendChild(link);
+    article.appendChild(h2);
+
+    const desc = document.createElement('p');
+    desc.className = 'sr-desc';
+    desc.textContent = post.description;
+    article.appendChild(desc);
+
+    if (post.tags.length > 0) {
+      const tagsDiv = document.createElement('div');
+      tagsDiv.className = 'sr-tags';
+      post.tags.forEach((tag: string) => {
+        const a = document.createElement('a');
+        a.href = '/blog/tags/' + tag;
+        a.className = 'sr-tag';
+        a.textContent = '#' + tag;
+        a.addEventListener('click', closeSearch);
+        tagsDiv.appendChild(a);
+      });
+      article.appendChild(tagsDiv);
+    }
+
+    return article;
+  }
+
+  (input as HTMLInputElement).addEventListener('input', () => {
+    const query = (input as HTMLInputElement).value.trim();
+    resultsEl!.textContent = '';
+
+    if (!query) {
+      statusEl!.textContent = '// type to search posts';
+      return;
+    }
+
+    const results = fuse.search(query);
+    if (results.length === 0) {
+      statusEl!.textContent = '// no results';
+    } else {
+      statusEl!.textContent = '// ' + results.length + ' result' + (results.length !== 1 ? 's' : '');
+      results.forEach((r: any) => resultsEl!.appendChild(makePostCard(r.item)));
+    }
+  });
+</script>
+
+<style>
+  #search-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(14, 12, 10, 0.88);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 10vh;
+  }
+
+  #search-overlay[hidden] { display: none; }
+
+  .search-modal {
+    width: 100%;
+    max-width: var(--max-content-width);
+    margin: 0 1rem;
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-border-default);
+    border-radius: 4px;
+    padding: 1rem;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: 0.75rem;
+  }
+
+  .search-prompt {
+    color: var(--color-accent-primary);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    user-select: none;
+  }
+
+  #search-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--color-text-primary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    caret-color: var(--color-accent-primary);
+  }
+
+  #search-input::placeholder { color: var(--color-text-muted); }
+
+  .search-esc {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border-default);
+    border-radius: 3px;
+    padding: 0.15em 0.45em;
+    user-select: none;
+  }
+
+  .search-status {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .search-results {
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sr-card {
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+  .sr-card:last-child { border-bottom: none; }
+
+  .sr-meta { margin-bottom: 0.25rem; }
+  .sr-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted); }
+
+  .sr-title { font-family: var(--font-mono); font-size: 1rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .sr-title a { color: var(--color-text-primary); text-decoration: none; }
+  .sr-title a:hover { color: var(--color-accent-primary); }
+
+  .sr-desc { font-size: 0.85rem; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: 0.4rem; }
+
+  .sr-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .sr-tag { font-family: var(--font-mono); font-size: 0.7rem; color: var(--color-text-muted); text-decoration: none; }
+  .sr-tag:hover { color: var(--color-accent-primary-dim); }
+</style>

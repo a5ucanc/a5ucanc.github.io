@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import SearchOverlay from '../components/SearchOverlay.astro';
+import { getCollection } from 'astro:content';
 
 interface Props {
   title: string;
@@ -17,6 +19,17 @@ const {
 
 const siteTitle = title === 'GHOSTWIRE' ? 'GHOSTWIRE' : `${title} | GHOSTWIRE`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .map((p) => ({
+    title: p.data.title,
+    description: p.data.description,
+    tags: p.data.tags,
+    slug: p.id,
+    pubDate: p.data.pubDate.toISOString().slice(0, 10),
+  }));
+const postsJson = JSON.stringify(allPosts);
 ---
 
 <!DOCTYPE html>
@@ -36,6 +49,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   </head>
   <body>
     <Header />
+    <SearchOverlay postsJson={postsJson} />
     <main>
       <slot />
     </main>

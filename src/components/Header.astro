@@ -2,34 +2,104 @@
 const navLinks = [
   { href: '/', label: 'home' },
   { href: '/blog', label: 'blog' },
-  { href: '/search', label: 'search' },
 ];
-const currentPath = Astro.url.pathname;
+
+const path = Astro.url.pathname;
 ---
 
 <header class="site-header">
   <div class="header-inner">
-    <a href="/" class="site-logo">
-      <span class="lb">[</span>ghostwire<span class="lb">]</span>
+    <a href="/" class="logo">
+      <span class="lb">[</span>GHOSTWIRE<span class="lb">]</span>
     </a>
-    <nav aria-label="Main navigation">
+    <nav class="nav">
       {navLinks.map(({ href, label }) => (
-        <a href={href} class:list={['nav-link', { active: currentPath === href || (href !== '/' && currentPath.startsWith(href)) }]}>
+        <a
+          href={href}
+          class:list={['nav-link', { active: path === href || (href !== '/' && path.startsWith(href)) }]}
+        >
           {label}
         </a>
       ))}
+      <button id="search-btn" class="nav-search-btn" aria-label="Search (press / or Ctrl+K)" title="Search">
+        search<kbd class="nav-kbd">/</kbd>
+      </button>
     </nav>
   </div>
 </header>
 
+<script>
+  document.getElementById('search-btn')?.addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('search:open'));
+  });
+</script>
+
 <style>
-  .site-header { border-bottom: 1px solid var(--color-border-subtle); background-color: var(--color-bg-void); position: sticky; top: 0; z-index: 100; }
-  .header-inner { max-width: var(--max-site-width); margin: 0 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: space-between; }
-  .site-logo { font-family: var(--font-mono); font-weight: 600; font-size: 1.05rem; color: var(--color-text-primary); text-decoration: none; letter-spacing: -0.02em; }
-  .site-logo:hover { text-decoration: none; color: var(--color-text-primary); }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg-base);
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  .header-inner {
+    max-width: var(--max-site-width);
+    margin: 0 auto;
+    padding: 0.9rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+  }
   .lb { color: var(--color-accent-primary); }
-  nav { display: flex; gap: 1.5rem; }
-  .nav-link { font-family: var(--font-mono); font-size: 0.875rem; color: var(--color-text-muted); text-decoration: none; transition: color 0.15s; }
-  .nav-link:hover { color: var(--color-text-primary); text-decoration: none; }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .nav-link {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .nav-link:hover,
   .nav-link.active { color: var(--color-accent-primary); }
+
+  .nav-search-btn {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    transition: color 0.15s;
+  }
+  .nav-search-btn:hover { color: var(--color-accent-primary); }
+
+  .nav-kbd {
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border-default);
+    border-radius: 3px;
+    padding: 0.1em 0.35em;
+  }
+  .nav-search-btn:hover .nav-kbd { border-color: var(--color-accent-primary-muted); }
 </style>
