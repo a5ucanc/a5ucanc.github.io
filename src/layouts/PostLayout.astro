@@ -8,11 +8,11 @@ interface Props {
   description: string;
   pubDate: Date;
   updatedDate?: Date;
-  tags: string[];
+  tags?: string[];
   difficulty?: string;
 }
 
-const { title, description, pubDate, updatedDate, tags, difficulty } = Astro.props;
+const { title, description, pubDate, updatedDate, tags = [], difficulty } = Astro.props;
 const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
