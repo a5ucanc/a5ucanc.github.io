@@ -10,9 +10,9 @@ const path = Astro.url.pathname;
 <header class="site-header">
   <div class="header-inner">
     <a href="/" class="logo">
-      <span class="lb">[</span>GHOSTWIRE<span class="lb">]</span>
+      <span class="lb">[</span>ghostwire<span class="lb">]</span>
     </a>
-    <nav class="nav">
+    <nav class="nav" aria-label="Main navigation">
       {navLinks.map(({ href, label }) => (
         <a
           href={href}
@@ -39,7 +39,7 @@ const path = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--color-bg-base);
+    background: var(--color-bg-void);
     border-bottom: 1px solid var(--color-border-subtle);
   }
 

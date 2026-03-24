@@ -5,7 +5,7 @@ interface Props {
 const { postsJson } = Astro.props;
 ---
 
-<div id="search-overlay" role="dialog" aria-modal="true" aria-label="Search posts" hidden>
+<div id="search-overlay" role="dialog" aria-label="Search posts" hidden>
   <div class="search-modal">
     <div class="search-bar">
       <span class="search-prompt">$_</span>
@@ -89,6 +89,7 @@ const { postsJson } = Astro.props;
     const time = document.createElement('time');
     time.className = 'sr-date';
     time.textContent = post.pubDate;
+    time.setAttribute('datetime', post.pubDate);
     meta.appendChild(time);
     article.appendChild(meta);
 
