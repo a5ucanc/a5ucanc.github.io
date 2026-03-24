@@ -34,12 +34,28 @@ const path = Astro.url.pathname;
   });
 </script>
 
+<script>
+  const header = document.querySelector('.site-header') as HTMLElement;
+  function updateNav() {
+    header.classList.toggle('scrolled', window.scrollY > 20);
+  }
+  window.addEventListener('scroll', updateNav, { passive: true });
+  updateNav();
+</script>
+
 <style>
   .site-header {
     position: sticky;
     top: 0;
     z-index: 100;
-    background: var(--color-bg-surface);
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background 0.25s, border-color 0.25s, backdrop-filter 0.25s;
+  }
+  .site-header.scrolled {
+    background: rgba(26, 24, 20, 0.82);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--color-border-subtle);
   }
 
