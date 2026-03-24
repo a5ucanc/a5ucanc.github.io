@@ -1,9 +1,12 @@
 ---
-interface Props { tag: string; }
+interface Props {
+  tag: string;
+}
 const { tag } = Astro.props;
+const href = `/blog/tags/${tag}`;
 ---
 
-<span class="tag-badge">#{tag}</span>
+<a href={href} class="tag-badge">#{tag}</a>
 
 <style>
   .tag-badge {
@@ -15,7 +18,12 @@ const { tag } = Astro.props;
     border: 1px solid var(--color-accent-primary-muted);
     padding: 0.15em 0.5em;
     border-radius: 3px;
+    text-decoration: none;
     transition: color 0.15s, border-color 0.15s;
   }
-  .tag-badge:hover { color: var(--color-accent-primary); border-color: var(--color-accent-primary); }
+  .tag-badge:hover {
+    color: var(--color-accent-primary);
+    border-color: var(--color-accent-primary);
+    text-decoration: none;
+  }
 </style>

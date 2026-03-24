@@ -20,7 +20,9 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   <p class="card-desc">{description}</p>
   {tags.length > 0 && (
     <div class="card-tags">
-      {tags.slice(0, 5).map((tag) => <span class="tag">#{tag}</span>)}
+      {tags.slice(0, 5).map((tag) => (
+        <a href={`/blog/tags/${tag}`} class="tag">#{tag}</a>
+      ))}
     </div>
   )}
 </article>
@@ -35,5 +37,6 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   .card-title a:hover { color: var(--color-accent-primary); }
   .card-desc { font-size: 0.9rem; color: var(--color-text-muted); line-height: 1.6; margin-bottom: 0.75rem; }
   .card-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .tag { font-size: 0.75rem; color: var(--color-text-muted); font-family: var(--font-mono); }
+  .tag { font-size: 0.75rem; color: var(--color-text-muted); font-family: var(--font-mono); text-decoration: none; }
+  .tag:hover { color: var(--color-accent-primary-dim); text-decoration: none; }
 </style>
