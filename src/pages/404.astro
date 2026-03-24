@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404">
+  <div class="not-found">
+    <p class="prompt"><span class="ps">$</span> find / -name "this-page" 2>/dev/null</p>
+    <h1>404</h1>
+    <p class="msg">No such file or directory.</p>
+    <a href="/">← return home</a>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found { padding: 6rem 1rem; max-width: var(--max-content-width); margin: 0 auto; }
+  .prompt { font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1.5rem; }
+  .ps { color: var(--color-accent-primary); margin-right: 0.5em; }
+  h1 { font-family: var(--font-mono); font-size: 4rem; font-weight: 600; color: var(--color-accent-threat); margin-bottom: 1rem; }
+  .msg { color: var(--color-text-secondary); margin-bottom: 2rem; }
+</style>
