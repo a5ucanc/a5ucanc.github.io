@@ -61,3 +61,33 @@
 .prose hr { border: none; border-top: 1px solid var(--color-border-subtle); margin: 2rem 0; }
 .prose a { color: var(--color-accent-primary-dim); text-decoration: underline; text-decoration-color: var(--color-accent-primary-muted); }
 .prose a:hover { color: var(--color-accent-primary); }
+
+/* Copy button for code blocks */
+.prose pre { position: relative; }
+
+.copy-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--color-bg-elevated);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-default);
+  border-radius: 3px;
+  padding: 0.2em 0.5em;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1.5;
+}
+.prose pre:hover .copy-btn { opacity: 1; }
+.copy-btn:hover {
+  color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary-muted);
+}
+.copy-btn.copied {
+  color: var(--color-accent-primary);
+  border-color: var(--color-accent-primary-muted);
+  opacity: 1;
+}
