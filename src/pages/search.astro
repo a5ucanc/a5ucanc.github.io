@@ -35,16 +35,15 @@ const postsJson = JSON.stringify(allPosts);
       <div id="search-results"></div>
     </div>
   </div>
-</BaseLayout>
 
-<!-- Step 1: expose server data to client -->
-<script define:vars={{ postsJson }}>
-  window.__POSTS__ = JSON.parse(postsJson);
-</script>
+  <!-- Step 1: expose server data to client -->
+  <script define:vars={{ postsJson }}>
+    window.__POSTS__ = JSON.parse(postsJson);
+  </script>
 
-<!-- Step 2: fuzzy search logic using DOM APIs only (no innerHTML with dynamic data) -->
-<script>
-  import Fuse from 'fuse.js';
+  <!-- Step 2: fuzzy search logic using DOM APIs only (no innerHTML with dynamic data) -->
+  <script>
+    import Fuse from 'fuse.js';
 
   const posts = window.__POSTS__;
   const fuse = new Fuse(posts, {
@@ -128,7 +127,8 @@ const postsJson = JSON.stringify(allPosts);
       results.forEach((r) => resultsEl.appendChild(makePostCard(r.item)));
     }
   });
-</script>
+  </script>
+</BaseLayout>
 
 <style>
   .search-page { padding: 3rem 1rem; }
