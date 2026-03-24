@@ -28,7 +28,6 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft))
             pubDate={post.data.pubDate}
             slug={post.id}
             tags={post.data.tags}
-            difficulty={post.data.difficulty}
           />
         ))}
         <a href="/blog" class="all-posts">view all posts →</a>
