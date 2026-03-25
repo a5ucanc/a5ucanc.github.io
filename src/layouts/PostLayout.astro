@@ -111,6 +111,14 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     tocEl.appendChild(ul);
     tocEl.classList.add('toc-ready');
 
+    // Align TOC top with first prose heading
+    const postEl = document.querySelector('article.post');
+    if (postEl && headings[0]) {
+      const postTop = postEl.getBoundingClientRect().top;
+      const headingTop = headings[0].getBoundingClientRect().top;
+      tocEl!.style.marginTop = Math.max(0, headingTop - postTop) + 'px';
+    }
+
     // Scroll-tracking: find the last heading whose offsetTop is above scrollY + navbar height
     function setActiveToc() {
       const scrollY = window.scrollY + 80;
@@ -156,12 +164,12 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
       flex: 0 0 160px;
       position: sticky;
       top: 5rem;
-      max-height: calc(100vh - 6rem);
-      overflow-y: auto;
-      opacity: 0.55;
+      overflow: hidden;
+      opacity: 0;
       transition: opacity 0.2s;
     }
-    #toc.toc-ready:hover { opacity: 1; }
+    #toc.toc-ready:hover,
+    #toc.toc-ready:focus-within { opacity: 1; }
   }
 
   .toc-label {
@@ -182,22 +190,23 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   .toc-link {
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: 0.62rem;
     color: var(--color-text-muted);
     text-decoration: none;
     padding: 0.2rem 0;
     line-height: 1.45;
-    opacity: 0.55;
-    transition: opacity 0.15s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.15s;
   }
-  .toc-link:hover { opacity: 0.85; text-decoration: none; }
+  .toc-link:hover { color: var(--color-text-primary); text-decoration: none; }
   .toc-link.active {
-    opacity: 1;
     font-weight: 600;
     color: var(--color-text-primary);
   }
   .toc-h3 {
     padding-left: 0.75rem;
-    font-size: 0.65rem;
+    font-size: 0.57rem;
   }
 </style>
