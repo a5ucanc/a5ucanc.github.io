@@ -112,12 +112,12 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     tocEl.classList.add('toc-ready');
 
     // Align TOC top with first prose heading
-    const postEl = document.querySelector('article.post');
-    if (postEl && headings[0]) {
-      const postTop = postEl.getBoundingClientRect().top;
-      const headingTop = headings[0].getBoundingClientRect().top;
-      tocEl!.style.marginTop = Math.max(0, headingTop - postTop) + 'px';
-    }
+    requestAnimationFrame(() => {
+      if (headings[0]) {
+        const delta = headings[0].getBoundingClientRect().top - tocEl!.getBoundingClientRect().top;
+        if (delta > 0) tocEl!.style.marginTop = delta + 'px';
+      }
+    });
 
     // Scroll-tracking: find the last heading whose offsetTop is above scrollY + navbar height
     function setActiveToc() {
@@ -164,7 +164,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
       flex: 0 0 160px;
       position: sticky;
       top: 5rem;
-      overflow: hidden;
+      overflow: visible;
       opacity: 0;
       transition: opacity 0.2s;
     }
@@ -190,10 +190,10 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   .toc-link {
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.62rem;
+    font-size: 0.6rem;
     color: var(--color-text-muted);
     text-decoration: none;
-    padding: 0.2rem 0;
+    padding: 0.38rem 0;
     line-height: 1.45;
     white-space: nowrap;
     overflow: hidden;
@@ -207,6 +207,6 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   }
   .toc-h3 {
     padding-left: 0.75rem;
-    font-size: 0.57rem;
+    font-size: 0.55rem;
   }
 </style>
