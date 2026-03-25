@@ -20,23 +20,21 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
 
 <BaseLayout title={title} description={description} ogType="article">
   <article class="post">
-    <div class="post-container">
-      <header class="post-header">
-        <div class="post-meta">
-          <time datetime={pubDate.toISOString()}>{fmt(pubDate)}</time>
-          {updatedDate && <span class="updated">— updated <time datetime={updatedDate.toISOString()}>{fmt(updatedDate)}</time></span>}
-        </div>
-        <h1 class="post-title">{title}</h1>
-        <p class="post-description">{description}</p>
-        {tags.length > 0 && (
-          <div class="post-tags">
-            {tags.map((tag) => <TagBadge tag={tag} />)}
-          </div>
-        )}
-      </header>
-      <div class="prose">
-        <slot />
+    <header class="post-header">
+      <div class="post-meta">
+        <time datetime={pubDate.toISOString()}>{fmt(pubDate)}</time>
+        {updatedDate && <span class="updated">— updated <time datetime={updatedDate.toISOString()}>{fmt(updatedDate)}</time></span>}
       </div>
+      <h1 class="post-title">{title}</h1>
+      <p class="post-description">{description}</p>
+      {tags.length > 0 && (
+        <div class="post-tags">
+          {tags.map((tag) => <TagBadge tag={tag} />)}
+        </div>
+      )}
+    </header>
+    <div class="prose">
+      <slot />
     </div>
     <nav id="toc" aria-label="Table of contents" class:list={[{ 'toc-ready': showToc }]}>
       {showToc && (
@@ -45,7 +43,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
           <ul class="toc-list">
             {tocHeadings.map((h) => (
               <li>
-                <a class:list={['toc-link', { 'toc-h3': h.depth === 3 }]} href={`#${h.slug}`}>
+                <a class="toc-link" href={`#${h.slug}`} style={`--toc-depth: ${h.depth - 2};`}>
                   {h.text}
                 </a>
               </li>
@@ -107,64 +105,62 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   const tocEl = document.getElementById('toc');
 
   if (tocEl && tocEl.classList.contains('toc-ready')) {
-    // Scroll-tracking: highlight the link for the current section
+    // Pre-build a slug→link map so scroll handler does no DOM queries
+    const tocLinkMap = new Map<string, Element>();
+    for (const a of tocEl.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')) {
+      tocLinkMap.set(a.getAttribute('href')!.slice(1), a);
+    }
+
+    // Cache heading offsets; refresh on resize (values change when layout reflows)
+    let tops = proseHeadings.map(h => h.offsetTop);
+    window.addEventListener('resize', () => { tops = proseHeadings.map(h => h.offsetTop); }, { passive: true });
+
     let prevActive: HTMLElement | null = null;
     function setActiveToc() {
       const scrollY = window.scrollY + 80;
       let active = proseHeadings[0];
-      for (const h of proseHeadings) {
-        if (h.offsetTop <= scrollY) active = h;
+      for (let i = 0; i < proseHeadings.length; i++) {
+        if (tops[i] <= scrollY) active = proseHeadings[i];
         else break;
       }
       if (active === prevActive) return;
-      if (prevActive) {
-        const old = tocEl!.querySelector(`a[href="#${prevActive.id}"]`);
-        if (old) old.classList.remove('active');
-      }
+      if (prevActive) tocLinkMap.get(prevActive.id)?.classList.remove('active');
       prevActive = active;
       if (!active.id) return;
-      const link = tocEl!.querySelector(`a[href="#${active.id}"]`);
-      if (link) link.classList.add('active');
+      tocLinkMap.get(active.id)?.classList.add('active');
     }
     window.addEventListener('scroll', setActiveToc, { passive: true });
     setActiveToc();
-
-    // Align ToC top to the first prose h2
-    const postContainer = document.querySelector('.post-container') as HTMLElement | null;
-    const firstH2 = document.querySelector('.prose h2') as HTMLElement | null;
-    function alignToc() {
-      if (!postContainer || !firstH2) return;
-      // Only apply on desktop where the two-column grid is active
-      if (window.innerWidth < 1025) {
-        tocEl.style.marginTop = '';
-        return;
-      }
-      const h2Top = firstH2.getBoundingClientRect().top;
-      const containerTop = postContainer.getBoundingClientRect().top;
-      const offset = Math.max(0, h2Top - containerTop);
-      tocEl.style.marginTop = offset + 'px';
-    }
-    alignToc();
-    window.addEventListener('resize', alignToc, { passive: true });
   }
 </script>
 </BaseLayout>
 
 <style>
-  /* Centering wrapper + grid container */
+  /* Centering wrapper */
   .post {
     max-width: calc(var(--max-content-width) + 300px + 4rem + 2rem);
     margin: 0 auto;
     padding: 3rem 2rem;
   }
 
-  /* Desktop: two-column grid — content left, ToC right */
+  /* Desktop: two-row, two-column grid
+     Row 1: post header (left column only)
+     Row 2: prose (left) + ToC (right) — both start at the same Y */
   @media (min-width: 1025px) {
     .post {
       display: grid;
       grid-template-columns: 1fr 300px;
-      gap: 2rem;
+      grid-template-areas:
+        "header ."
+        "prose  toc";
+      column-gap: 2rem;
       align-items: start;
+    }
+    .post-header { grid-area: header; }
+    .prose        { grid-area: prose; }
+    #toc.toc-ready {
+      grid-area: toc;
+      margin-top: var(--prose-heading-margin);
     }
   }
 
@@ -173,11 +169,8 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     .post { padding: 3rem 1rem; }
   }
 
-  /* Content column: prevent grid blowout */
-  .post-container { min-width: 0; }
-
-  /* Constrain prose text width for comfortable reading */
-  .prose { max-width: 75ch; }
+  /* Prevent grid blowout on wide code blocks */
+  .prose { max-width: 75ch; min-width: 0; }
   .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border-subtle); }
   .post-meta { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 1rem; flex-wrap: wrap; }
   .post-title { font-family: var(--font-mono); font-size: 1.75rem; font-weight: 600; line-height: 1.2; margin-bottom: 0.75rem; color: var(--color-text-primary); }
@@ -226,8 +219,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     font-size: 0.75rem;
     color: var(--color-text-muted);
     text-decoration: none;
-    padding: 0.3rem 0 0.3rem 1em;
-    text-indent: -1em;
+    padding: 0.3rem 0 0.3rem calc(1em + var(--toc-depth, 0) * 0.75rem);
     line-height: 1.4;
     overflow-wrap: break-word;
     transition: color 0.15s, opacity 0.15s;
@@ -242,10 +234,5 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     font-weight: 600;
     color: var(--color-text-primary);
     opacity: 1;
-  }
-  .toc-h3 {
-    padding-left: calc(1em + 0.75rem);
-    text-indent: calc(-1em - 0.75rem);
-    font-size: 0.7rem;
   }
 </style>
