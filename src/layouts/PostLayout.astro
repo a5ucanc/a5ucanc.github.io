@@ -128,6 +128,24 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     }
     window.addEventListener('scroll', setActiveToc, { passive: true });
     setActiveToc();
+
+    // Align ToC top to the first prose h2
+    const postContainer = document.querySelector('.post-container') as HTMLElement | null;
+    const firstH2 = document.querySelector('.prose h2') as HTMLElement | null;
+    function alignToc() {
+      if (!postContainer || !firstH2) return;
+      // Only apply on desktop where the two-column grid is active
+      if (window.innerWidth < 1025) {
+        tocEl.style.marginTop = '';
+        return;
+      }
+      const h2Top = firstH2.getBoundingClientRect().top;
+      const containerTop = postContainer.getBoundingClientRect().top;
+      const offset = Math.max(0, h2Top - containerTop);
+      tocEl.style.marginTop = offset + 'px';
+    }
+    alignToc();
+    window.addEventListener('resize', alignToc, { passive: true });
   }
 </script>
 </BaseLayout>
