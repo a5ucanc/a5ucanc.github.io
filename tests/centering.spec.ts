@@ -59,3 +59,14 @@ test('blog post is centered on wide screen', async ({ page }) => {
   const diff = Math.abs(dimensions.postLeft - dimensions.postRight);
   expect(diff, `Post left=${dimensions.postLeft} right=${dimensions.postRight}`).toBeLessThanOrEqual(20);
 });
+
+test('toc is visible immediately on page load (no fade delay)', async ({ page }) => {
+  await page.goto('/blog/01-heap-overflow-linux');
+  // Check computed opacity immediately — no waiting for fonts/animations
+  const opacity = await page.evaluate(() => {
+    const toc = document.getElementById('toc');
+    if (!toc) throw new Error('#toc not found');
+    return parseFloat(getComputedStyle(toc).opacity);
+  });
+  expect(opacity, `#toc opacity should be 1 immediately, got ${opacity}`).toBe(1);
+});
