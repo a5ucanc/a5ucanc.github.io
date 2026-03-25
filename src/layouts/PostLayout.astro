@@ -147,26 +147,33 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
 </BaseLayout>
 
 <style>
-  .post { padding: 3rem 1rem; }
-  .post-container { max-width: var(--max-content-width); margin: 0 auto; width: 100%; }
-
-  /* Desktop layout: content column always centered.
-     padding-right = TOC(120px) + gap(2rem) + base-padding(3rem) balances
-     the TOC on the left so the content sits at the same horizontal center
-     whether or not the TOC is present.
-     Minimum viewport: TOC(120) + gap(32) + content(740) + 2×(120+32+48)padding = 1140px */
-  @media (min-width: 1140px) {
-    /* Keep base padding: 3rem 1rem (same as all other pages).
-       Only extend padding-right to balance the 120px TOC + 2rem gap on the left,
-       so the content column lands at the exact same horizontal position as other pages. */
-    .post {
-      display: flex;
-      gap: 2rem;
-      align-items: flex-start;
-      padding-right: calc(1rem + 120px + 2rem);
-    }
-    .post-container { flex: 1; min-width: 0; max-width: var(--max-content-width); margin: 0 auto; }
+  /* Centering wrapper + grid container */
+  .post {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 3rem 2rem;
   }
+
+  /* Desktop: two-column grid — content left, ToC right */
+  @media (min-width: 1025px) {
+    .post {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 2rem;
+      align-items: start;
+    }
+  }
+
+  /* Mobile: single column, horizontal padding tightens */
+  @media (max-width: 1024px) {
+    .post { padding: 3rem 1rem; }
+  }
+
+  /* Content column: prevent grid blowout */
+  .post-container { min-width: 0; }
+
+  /* Constrain prose text width for comfortable reading */
+  .prose { max-width: 75ch; }
   .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border-subtle); }
   .post-meta { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 1rem; flex-wrap: wrap; }
   .post-title { font-family: var(--font-mono); font-size: 1.75rem; font-weight: 600; line-height: 1.2; margin-bottom: 0.75rem; color: var(--color-text-primary); }
