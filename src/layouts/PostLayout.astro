@@ -149,7 +149,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
 <style>
   /* Centering wrapper + grid container */
   .post {
-    max-width: 1400px;
+    max-width: calc(var(--max-content-width) + 300px + 4rem + 2rem);
     margin: 0 auto;
     padding: 3rem 2rem;
   }
