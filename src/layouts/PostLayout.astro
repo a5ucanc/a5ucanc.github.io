@@ -111,11 +111,13 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
     tocEl.appendChild(ul);
     tocEl.classList.add('toc-ready');
 
-    // Align TOC top with first prose heading
-    requestAnimationFrame(() => {
-      if (headings[0]) {
-        const delta = headings[0].getBoundingClientRect().top - tocEl!.getBoundingClientRect().top;
-        if (delta > 0) tocEl!.style.marginTop = delta + 'px';
+    // Align TOC top with first prose heading — wait for fonts to stabilise layout
+    document.fonts.ready.then(() => {
+      const postEl = document.querySelector('article.post');
+      if (postEl && headings[0]) {
+        const postTop = postEl.getBoundingClientRect().top;
+        const headingTop = headings[0].getBoundingClientRect().top;
+        tocEl!.style.marginTop = Math.max(0, headingTop - postTop) + 'px';
       }
     });
 
@@ -164,7 +166,6 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
       flex: 0 0 160px;
       position: sticky;
       top: 5rem;
-      overflow: visible;
       opacity: 0;
       transition: opacity 0.2s;
     }
@@ -190,10 +191,10 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   .toc-link {
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.6rem;
+    font-size: 0.57rem;
     color: var(--color-text-muted);
     text-decoration: none;
-    padding: 0.38rem 0;
+    padding: 0.35rem 0;
     line-height: 1.45;
     white-space: nowrap;
     overflow: hidden;
@@ -207,6 +208,6 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   }
   .toc-h3 {
     padding-left: 0.75rem;
-    font-size: 0.55rem;
+    font-size: 0.52rem;
   }
 </style>
