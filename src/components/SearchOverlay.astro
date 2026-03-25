@@ -52,12 +52,46 @@ const { postsJson } = Astro.props;
     (input as HTMLInputElement).value = '';
     statusEl!.textContent = '// type to search posts';
     resultsEl!.textContent = '';
+    selectedIndex = -1;
     requestAnimationFrame(() => (input as HTMLInputElement).focus());
   }
 
   function closeSearch() {
     overlay!.setAttribute('hidden', '');
   }
+
+  let selectedIndex = -1;
+
+  function getCards(): HTMLElement[] {
+    return Array.from(resultsEl!.querySelectorAll<HTMLElement>('.sr-card'));
+  }
+
+  function setSelected(idx: number) {
+    const cards = getCards();
+    if (selectedIndex >= 0 && selectedIndex < cards.length) {
+      cards[selectedIndex].classList.remove('sr-card--active');
+    }
+    selectedIndex = idx;
+    if (selectedIndex >= 0 && selectedIndex < cards.length) {
+      cards[selectedIndex].classList.add('sr-card--active');
+      cards[selectedIndex].scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  (input as HTMLInputElement).addEventListener('keydown', (e: KeyboardEvent) => {
+    const cards = getCards();
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setSelected(Math.min(selectedIndex + 1, cards.length - 1));
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setSelected(Math.max(selectedIndex - 1, -1));
+    } else if (e.key === 'Enter' && selectedIndex >= 0) {
+      e.preventDefault();
+      const link = cards[selectedIndex]?.querySelector<HTMLAnchorElement>('.sr-title a');
+      if (link) { closeSearch(); window.location.href = link.href; }
+    }
+  });
 
   document.addEventListener('keydown', (e: KeyboardEvent) => {
     const tag = (document.activeElement as HTMLElement)?.tagName;
@@ -125,6 +159,7 @@ const { postsJson } = Astro.props;
   }
 
   (input as HTMLInputElement).addEventListener('input', () => {
+    selectedIndex = -1;
     const query = (input as HTMLInputElement).value.trim();
     resultsEl!.textContent = '';
 
@@ -228,6 +263,12 @@ const { postsJson } = Astro.props;
     border-bottom: 1px solid var(--color-border-default);
   }
   .sr-card:last-child { border-bottom: none; }
+
+  .sr-card--active {
+    background: var(--color-bg-surface);
+    outline: 1px solid var(--color-border-default);
+    outline-offset: -1px;
+  }
 
   .sr-meta { margin-bottom: 0.25rem; }
   .sr-date { font-family: var(--font-mono); font-size: 0.75rem; color: var(--color-text-muted); }

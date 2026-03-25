@@ -70,3 +70,20 @@ test('toc is visible immediately on page load (no fade delay)', async ({ page })
   });
   expect(opacity, `#toc opacity should be 1 immediately, got ${opacity}`).toBe(1);
 });
+
+test('search results support arrow key navigation', async ({ page }) => {
+  await page.goto('/');
+  // Open search
+  await page.keyboard.press('/');
+  await page.waitForSelector('#search-overlay:not([hidden])');
+  // Type something that returns results
+  await page.fill('#search-input', 'heap');
+  await page.waitForSelector('.sr-card');
+  // Press ArrowDown — first card should become active
+  await page.keyboard.press('ArrowDown');
+  const activeCards = await page.locator('.sr-card--active').count();
+  expect(activeCards, 'one card should be highlighted after ArrowDown').toBe(1);
+  // Confirm the active card has a navigable href
+  const href = await page.locator('.sr-card--active .sr-title a').getAttribute('href');
+  expect(href).toBeTruthy();
+});
