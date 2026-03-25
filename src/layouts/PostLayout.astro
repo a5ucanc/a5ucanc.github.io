@@ -17,6 +17,7 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
 
 <BaseLayout title={title} description={description} ogType="article">
   <article class="post">
+    <nav id="toc" aria-label="Table of contents"></nav>
     <div class="post-container">
       <header class="post-header">
         <div class="post-meta">
@@ -31,7 +32,6 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
           </div>
         )}
       </header>
-      <nav id="toc" aria-label="Table of contents"></nav>
       <div class="prose">
         <slot />
       </div>
@@ -131,7 +131,12 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
 
 <style>
   .post { padding: 3rem 1rem; }
-  .post-container { max-width: var(--max-content-width); margin: 0 auto; }
+  .post-container { max-width: var(--max-content-width); margin: 0 auto; width: 100%; }
+
+  @media (min-width: 1000px) {
+    .post { display: flex; gap: 2rem; align-items: flex-start; max-width: 980px; margin: 0 auto; }
+    .post-container { flex: 1; min-width: 0; margin: 0; }
+  }
   .post-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border-subtle); }
   .post-meta { display: flex; align-items: center; gap: 0.75rem; font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 1rem; flex-wrap: wrap; }
   .post-title { font-family: var(--font-mono); font-size: 1.75rem; font-weight: 600; line-height: 1.2; margin-bottom: 0.75rem; color: var(--color-text-primary); }
@@ -142,25 +147,30 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   .meta-sep { color: var(--color-border-strong); }
   .read-time { font-family: var(--font-mono); }
 
-  /* Table of Contents — inline block, revealed when JS populates it */
-  #toc {
-    display: none;
-    margin-bottom: 2rem;
-    padding: 0.875rem 1.25rem;
-    background: var(--color-bg-surface);
-    border: 1px solid var(--color-border-default);
-    border-left: 3px solid var(--color-accent-primary-muted);
-    border-radius: 4px;
+  /* Table of Contents — sticky left sidebar, ≥1000px only */
+  #toc { display: none; }
+
+  @media (min-width: 1000px) {
+    #toc.toc-ready {
+      display: block;
+      flex: 0 0 160px;
+      position: sticky;
+      top: 5rem;
+      max-height: calc(100vh - 6rem);
+      overflow-y: auto;
+      opacity: 0.55;
+      transition: opacity 0.2s;
+    }
+    #toc.toc-ready:hover { opacity: 1; }
   }
-  #toc.toc-ready { display: block; }
 
   .toc-label {
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--color-text-muted);
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.75rem;
   }
 
   .toc-list {
@@ -172,22 +182,22 @@ const fmt = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month:
   .toc-link {
     display: block;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    padding: 0.18rem 0 0.18rem 0.75rem;
-    border-left: 2px solid transparent;
-    line-height: 1.4;
-    transition: color 0.15s, border-color 0.15s;
-  }
-  .toc-link:hover { color: var(--color-text-primary); text-decoration: none; }
-  .toc-link.active {
-    color: var(--color-accent-primary);
-    border-left-color: var(--color-accent-primary);
-  }
-  .toc-h3 {
-    padding-left: 1.5rem;
     font-size: 0.7rem;
     color: var(--color-text-muted);
+    text-decoration: none;
+    padding: 0.2rem 0;
+    line-height: 1.45;
+    opacity: 0.55;
+    transition: opacity 0.15s;
+  }
+  .toc-link:hover { opacity: 0.85; text-decoration: none; }
+  .toc-link.active {
+    opacity: 1;
+    font-weight: 600;
+    color: var(--color-text-primary);
+  }
+  .toc-h3 {
+    padding-left: 0.75rem;
+    font-size: 0.65rem;
   }
 </style>
