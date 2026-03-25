@@ -87,3 +87,16 @@ test('search results support arrow key navigation', async ({ page }) => {
   const href = await page.locator('.sr-card--active .sr-title a').getAttribute('href');
   expect(href).toBeTruthy();
 });
+
+test('body background is darker than original #131109', async ({ page }) => {
+  await page.goto('/');
+  const bgColor = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  // Parse rgb(r, g, b)
+  const match = bgColor.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+  expect(match, 'body background should be an rgb color').toBeTruthy();
+  const [, r, g, b] = match!.map(Number);
+  // Original base #131109 = rgb(19, 17, 9). New #0B0A07 = rgb(11, 10, 7). Must be darker.
+  const oldMax = Math.max(19, 17, 9);  // 19
+  const newMax = Math.max(r, g, b);
+  expect(newMax, `body bg max channel ${newMax} should be < old max ${oldMax}`).toBeLessThan(oldMax);
+});

@@ -4,10 +4,10 @@
 
 /* DEADFALL — phosphor amber + burnt rust + institutional olive */
 :root {
-  --color-bg-void:              #0E0C0A;
-  --color-bg-base:              #131109;
-  --color-bg-surface:           #1A1814;
-  --color-bg-elevated:          #232018;
+  --color-bg-void:              #080704;
+  --color-bg-base:              #0B0A07;
+  --color-bg-surface:           #12100C;
+  --color-bg-elevated:          #1A1710;
   --color-text-primary:         #E8DFC8;
   --color-text-secondary:       #A89878;
   --color-text-muted:           #8B7B60;
@@ -19,7 +19,7 @@
   --color-accent-threat-ghost:  #1E0E08;
   --color-accent-intel:         #C8B840;
   --color-accent-intel-ghost:   #1A1808;
-  --color-code-bg:              #24292e;
+  --color-code-bg:              var(--color-bg-void);
   --color-code-keyword:         #E8A842;
   --color-code-string:          #C8B840;
   --color-code-function:        #D4A870;
