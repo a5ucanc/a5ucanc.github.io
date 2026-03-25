@@ -19,7 +19,7 @@
   --color-accent-threat-ghost:  #1E0E08;
   --color-accent-intel:         #C8B840;
   --color-accent-intel-ghost:   #1A1808;
-  --color-code-bg:              var(--color-bg-surface);
+  --color-code-bg:              var(--color-bg-void);
   --color-code-keyword:         #E8A842;
   --color-code-string:          #C8B840;
   --color-code-function:        #D4A870;
